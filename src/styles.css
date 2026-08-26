@@ -1,0 +1,405 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: #080808;
+  --foreground: #fafafa;
+  --card: #0d0d0d;
+  --card-foreground: #fafafa;
+  --popover: #0d0d0d;
+  --popover-foreground: #fafafa;
+  --primary: #E50910;
+  --primary-foreground: #ffffff;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #fafafa;
+  --muted: #1a1a1a;
+  --muted-foreground: #a1a1aa;
+  --accent: #1f1f1f;
+  --accent-foreground: #fafafa;
+  --destructive: #E50910;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255,255,255,0.16);
+  --input: #27272a;
+  --ring: #E50910;
+  --chart-1: #E50910;
+  --chart-2: #f87171;
+  --chart-3: #a1a1aa;
+  --chart-4: #52525b;
+  --chart-5: #27272a;
+  --sidebar: #080808;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #E50910;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: rgba(255,255,255,0.16);
+  --sidebar-ring: #E50910;
+}
+
+.dark {
+  --background: #080808;
+  --foreground: #fafafa;
+  --card: #0d0d0d;
+  --card-foreground: #fafafa;
+  --popover: #0d0d0d;
+  --popover-foreground: #fafafa;
+  --primary: #E50910;
+  --primary-foreground: #ffffff;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #fafafa;
+  --muted: #1a1a1a;
+  --muted-foreground: #a1a1aa;
+  --accent: #1f1f1f;
+  --accent-foreground: #fafafa;
+  --destructive: #E50910;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255,255,255,0.16);
+  --input: #27272a;
+  --ring: #E50910;
+  --chart-1: #E50910;
+  --chart-2: #f87171;
+  --chart-3: #a1a1aa;
+  --chart-4: #52525b;
+  --chart-5: #27272a;
+  --sidebar: #080808;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #E50910;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: rgba(255,255,255,0.16);
+  --sidebar-ring: #E50910;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html,
+  body,
+  button,
+  input,
+  textarea,
+  select {
+    font-family: var(--font-sans);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    -webkit-touch-callout: none;
+  }
+
+  body,
+  body * {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  input,
+  textarea,
+  select,
+  [contenteditable="true"] {
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
+  }
+}
+
+/* Universal readable-size floor. JFL, look at this. establishes the 1rem minimum. */
+[class*="text-xs"],
+[class*="text-sm"],
+[class*="text-[9px]"],
+[class*="text-[10px]"],
+[class*="text-[11px]"],
+[class*="text-[0.8rem]"],
+[class*="clamp(0.72rem"] {
+  font-size: 1rem !important;
+  line-height: 1.45rem !important;
+}
+
+/* Skeleton shimmer - slow steady left-to-right wave, per Stage 8 */
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: hsl(var(--muted) / 0.6);
+  isolation: isolate;
+}
+
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(var(--muted-foreground) / 0.08) 20%,
+    hsl(var(--muted-foreground) / 0.14) 50%,
+    hsl(var(--muted-foreground) / 0.08) 80%,
+    transparent 100%
+  );
+  animation: skeleton-shimmer-wave 1.8s linear infinite;
+  will-change: transform;
+}
+
+@keyframes skeleton-shimmer-wave {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer::after {
+    animation: none;
+  }
+}
+
+/* Public landing experience */
+.landing-display {
+  font-optical-sizing: auto;
+  text-wrap: balance;
+}
+
+.landing-image-fade {
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0%) 0%,
+    rgb(0 0 0 / 6%) 10%,
+    rgb(0 0 0 / 18%) 24%,
+    rgb(0 0 0 / 42%) 42%,
+    rgb(0 0 0 / 72%) 58%,
+    rgb(0 0 0 / 92%) 74%,
+    rgb(0 0 0 / 99%) 84%,
+    #000 88%,
+    #000 100%
+  );
+}
+
+.landing-headline-in,
+.landing-headline-out {
+  animation-duration: 500ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+}
+
+.landing-headline-in {
+  animation-name: landing-headline-in;
+}
+
+.landing-headline-out {
+  animation-name: landing-headline-out;
+}
+
+.landing-swipe-chevron {
+  animation: landing-swipe-cue 1400ms ease-in-out infinite;
+}
+
+@keyframes landing-headline-in {
+  from {
+    transform: translate3d(0, -100%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes landing-headline-out {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 100%, 0);
+  }
+}
+
+@keyframes landing-swipe-cue {
+  0%,
+  100% {
+    transform: translate3d(0, -1px, 0);
+    opacity: 0.65;
+  }
+  50% {
+    transform: translate3d(0, 4px, 0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-headline-in {
+    animation-name: landing-headline-fade-in;
+    animation-duration: 200ms;
+  }
+
+  .landing-headline-out {
+    animation-name: landing-headline-fade-out;
+    animation-duration: 200ms;
+  }
+
+  .landing-swipe-chevron {
+    animation: none;
+  }
+}
+
+@keyframes landing-headline-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes landing-headline-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.landing-transform-wipe {
+  animation: landing-transform-wipe 650ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.landing-after-swipe {
+  animation: landing-after-swipe-in 300ms ease-out both;
+}
+
+@keyframes landing-transform-wipe {
+  from {
+    left: -20%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  to {
+    left: 110%;
+    opacity: 0;
+  }
+}
+
+@keyframes landing-after-swipe-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-transformation-section *,
+  .landing-transformation-section *::before,
+  .landing-transformation-section *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+
+  .landing-transform-wipe {
+    display: none;
+  }
+
+  .landing-after-swipe {
+    animation: none;
+  }
+}
+
+/* Testimonial intro pages - blur entrance */
+.testimonial-blur-in {
+  animation: testimonial-blur-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes testimonial-blur-in {
+  from {
+    filter: blur(12px);
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    filter: blur(0);
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-blur-in {
+    animation: testimonial-fade-in 300ms ease-out both;
+  }
+}
+
+@keyframes testimonial-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
