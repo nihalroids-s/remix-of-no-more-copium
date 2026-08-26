@@ -4,10 +4,10 @@ import { AccountAccess } from "@/components/account/AccountAccess";
 export const Route = createFileRoute("/access")({
   head: () => ({
     meta: [
-      { title: "Local Prototype — No More Copium" },
+      { title: "Sign in — No More Copium" },
       {
         name: "description",
-        content: "Select an account to enter Coach Mode or Client Mode.",
+        content: "Create an account with your access code, or sign in with Google.",
       },
       { name: "robots", content: "noindex" },
     ],
@@ -21,7 +21,7 @@ function AccessPage() {
       <div className="w-full max-w-md text-center">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">No More Copium</h1>
         <p className="mt-1.5 text-[0.9375rem] text-muted-foreground">
-          Local Prototype · Instant Coach & Client Access
+          Create an account with your access code, or sign in with Google.
         </p>
         <div className="mt-6">
           <AccountAccess />
