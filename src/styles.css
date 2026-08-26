@@ -403,3 +403,11 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+/* Tactile interactive feedback helper for mobile touch & clicks */
+.tap-tactile {
+  transition: transform 100ms ease-out;
+  user-select: none;
+}
+.tap-tactile:active {
+  transform: scale(0.98);
+}
