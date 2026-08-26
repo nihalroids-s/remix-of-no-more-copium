@@ -116,7 +116,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "black-translucent",
       },
       { name: "mobile-web-app-capable", content: "yes" },
-      { name: "theme-color", content: "#0f172a" },
+      { name: "theme-color", content: "#080808" },
       { property: "og:title", content: "No More Copium" },
       {
         property: "og:description",
@@ -134,7 +134,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon", sizes: "192x192" },
-      { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png", sizes: "180x180" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
+      { rel: "icon", href: "/favicon.png", type: "image/png", sizes: "32x32" },
       { rel: "manifest", href: "/manifest.webmanifest" },
     ],
   }),
