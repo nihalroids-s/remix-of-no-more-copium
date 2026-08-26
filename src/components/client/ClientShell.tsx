@@ -28,21 +28,19 @@ export function ClientShell() {
 
   useEffect(() => {
     if (loading) return;
-    if (account?.role === "client" && !account.approvedAt) {
-      void navigate({ to: "/onboarding", replace: true });
-    } else if (account?.role !== "client") {
+    if (account?.role !== "client") {
       void navigate({ to: "/access", replace: true });
     }
   }, [account, loading, navigate]);
 
   useEffect(() => {
-    if (loading || account?.role !== "client" || !account.approvedAt) return;
+    if (loading || account?.role !== "client") return;
     // Paused workouts from a previous day are finalized into history automatically.
     void finalizeExpiredPausedWorkouts(account.id);
   }, [account, loading]);
 
   useEffect(() => {
-    if (loading || account?.role !== "client" || !account.approvedAt) return;
+    if (loading || account?.role !== "client") return;
     const id = window.setTimeout(async () => {
       try {
         const { preloadClientRoutes, warmStaticCache } = await import("@/lib/route-preloader");
@@ -70,7 +68,7 @@ export function ClientShell() {
     return () => window.clearTimeout(id);
   }, [account, loading, router, pathname]);
 
-  if (loading || account?.role !== "client" || !account.approvedAt) {
+  if (loading || account?.role !== "client") {
     return <div className="min-h-[100dvh] bg-background" />;
   }
 
