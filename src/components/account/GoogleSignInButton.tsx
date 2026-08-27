@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AlertCircle, LoaderCircle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { cn } from "@/lib/utils";
 
 export function GoogleSignInButton({
@@ -19,11 +19,11 @@ export function GoogleSignInButton({
     setSigningIn(true);
     setError(null);
     try {
-      await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: `${window.location.origin}/access` },
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
       });
-      // The page redirects to Google; nothing else to do here.
+      if (result.error) throw result.error;
+      // redirected: browser is on its way to Google; nothing else to do.
     } catch (nextError) {
       setSigningIn(false);
       setError(
