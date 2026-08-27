@@ -6,6 +6,7 @@ import type { ProgramWorkout } from "./coach-workouts";
 import type { SessionResultsMap } from "./coach-workout-preview";
 import { computeSummary, resultKey } from "./coach-workout-preview";
 import { emitLocalEvent, LOCAL_WORKOUT_HISTORY_CHANGED_EVENT } from "./local-events";
+import { supabaseLoose } from "./supabase-loose-client";
 
 export type WorkoutSessionUnitSnapshot = {
   id: string;
@@ -206,7 +207,7 @@ export async function saveWorkoutSession({
   const startedAtIso = new Date(completedAt.getTime() - normalizedDuration * 1000).toISOString();
   const data = buildWorkoutSessionData({ workout, exercises, weightUnits, results });
 
-  const { data: row, error } = await supabase
+  const { data: row, error } = await supabaseLoose
     .from("workout_sessions")
     .insert({
       id: sessionId,
@@ -233,7 +234,7 @@ export async function saveWorkoutSession({
 }
 
 export async function fetchWorkoutSessions(clientId: string): Promise<WorkoutHistorySession[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseLoose
     .from("workout_sessions")
     .select(
       "id, client_id, program_id, workout_id, workout_name, started_at, completed_at, duration_seconds, completed_sets, total_sets, total_reps, volume_by_unit, session_data",
@@ -315,7 +316,7 @@ export async function updateWorkoutSession(
   if (!current) return;
   const data = patch.data ?? current.data;
   const summary = computeSnapshotSummary(data);
-  const { error } = await supabase
+  const { error } = await supabaseLoose
     .from("workout_sessions")
     .update({
       session_data: data,
@@ -336,7 +337,7 @@ export async function deleteWorkoutSession(
   clientId: string,
   sessionId: string,
 ): Promise<void> {
-  const { error } = await supabase
+  const { error } = await supabaseLoose
     .from("workout_sessions")
     .delete()
     .eq("id", sessionId)

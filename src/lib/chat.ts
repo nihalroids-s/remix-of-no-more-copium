@@ -92,7 +92,7 @@ export async function fetchCoachChatInbox(coachId: string): Promise<CoachChatCon
   const accounts = await fetchAccounts();
   const unread = await fetchChatUnreadSummary(coachId);
 
-  const { data: threads } = await supabase
+  const { data: threads } = await supabaseLoose
     .from("chat_threads")
     .select("id, client_id")
     .eq("coach_id", coachId);
@@ -104,7 +104,7 @@ export async function fetchCoachChatInbox(coachId: string): Promise<CoachChatCon
   const threadIds = [...threadByClient.values()];
   const lastByThread = new Map<string, CloudChatRow>();
   if (threadIds.length > 0) {
-    const { data: latest } = await supabase
+    const { data: latest } = await supabaseLoose
       .from("chat_messages")
       .select("id, thread_id, sender_account_id, body, created_at")
       .in("thread_id", threadIds)
@@ -147,21 +147,21 @@ export async function ensureChatThread(clientId: string): Promise<string> {
   if (!client || client.role !== "client") throw new Error("Client account was not found.");
   if (!coach) throw new Error("Create a Coach account first.");
 
-  const { data: existing } = await supabase
+  const { data: existing } = await supabaseLoose
     .from("chat_threads")
     .select("id")
     .eq("client_id", clientId)
     .maybeSingle();
   if (existing) return String(existing.id);
 
-  const { data: created, error } = await supabase
+  const { data: created, error } = await supabaseLoose
     .from("chat_threads")
     .insert({ client_id: clientId, coach_id: coach.id })
     .select("id")
     .maybeSingle();
   if (error || !created) {
     // Race: another tab may have created it — re-read.
-    const { data: retry } = await supabase
+    const { data: retry } = await supabaseLoose
       .from("chat_threads")
       .select("id")
       .eq("client_id", clientId)
@@ -173,7 +173,7 @@ export async function ensureChatThread(clientId: string): Promise<string> {
 }
 
 export async function fetchChatMessages(threadId: string): Promise<ChatMessage[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseLoose
     .from("chat_messages")
     .select("id, thread_id, sender_account_id, body, created_at")
     .eq("thread_id", threadId)
@@ -203,7 +203,7 @@ export async function sendChatMessage({
   const sender = await fetchAccount(senderAccountId);
   if (!sender) throw new Error("Sender account was not found.");
   const threadId = await ensureChatThread(clientId);
-  const { error } = await supabase.from("chat_messages").insert({
+  const { error } = await supabaseLoose.from("chat_messages").insert({
     id: messageId,
     thread_id: threadId,
     sender_account_id: senderAccountId,
@@ -271,7 +271,7 @@ export async function appendLocalChatMessages(messages: ChatMessage[]): Promise<
 
 export async function markChatRead(accountId: string, clientId: string): Promise<void> {
   const threadId = await ensureChatThread(clientId);
-  const { error } = await supabase.from("chat_reads").upsert(
+  const { error } = await supabaseLoose.from("chat_reads").upsert(
     {
       thread_id: threadId,
       account_id: accountId,
@@ -294,7 +294,7 @@ async function touchThreadLastMessage(
   senderAccountId: string,
   body: string,
 ): Promise<void> {
-  await supabase
+  await supabaseLoose
     .from("chat_threads")
     .update({
       last_message_body: body.slice(0, 2000),
