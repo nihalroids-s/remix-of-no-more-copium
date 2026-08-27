@@ -14,8 +14,148 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_code_attempts: {
+        Row: {
+          attempted_at: string
+          code_id: string | null
+          id: number
+          ip_hash: string
+          outcome: string
+        }
+        Insert: {
+          attempted_at?: string
+          code_id?: string | null
+          id?: never
+          ip_hash: string
+          outcome: string
+        }
+        Update: {
+          attempted_at?: string
+          code_id?: string | null
+          id?: never
+          ip_hash?: string
+          outcome?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_code_attempts_code_id_fkey"
+            columns: ["code_id"]
+            isOneToOne: false
+            referencedRelation: "access_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      access_code_events: {
+        Row: {
+          actor: string
+          code_id: string | null
+          code_prefix: string | null
+          created_at: string
+          detail: string | null
+          event: string
+          id: number
+          ip_hash: string | null
+        }
+        Insert: {
+          actor: string
+          code_id?: string | null
+          code_prefix?: string | null
+          created_at?: string
+          detail?: string | null
+          event: string
+          id?: never
+          ip_hash?: string | null
+        }
+        Update: {
+          actor?: string
+          code_id?: string | null
+          code_prefix?: string | null
+          created_at?: string
+          detail?: string | null
+          event?: string
+          id?: never
+          ip_hash?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_code_events_code_id_fkey"
+            columns: ["code_id"]
+            isOneToOne: false
+            referencedRelation: "access_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      access_codes: {
+        Row: {
+          code_hash: string
+          code_prefix: string
+          created_at: string
+          created_by: string
+          expires_at: string
+          failed_attempts: number
+          id: string
+          note: string
+          redeemed_at: string | null
+          revoked_at: string | null
+          ticket_expires_at: string | null
+          ticket_hash: string | null
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code_hash: string
+          code_prefix: string
+          created_at?: string
+          created_by: string
+          expires_at: string
+          failed_attempts?: number
+          id?: string
+          note?: string
+          redeemed_at?: string | null
+          revoked_at?: string | null
+          ticket_expires_at?: string | null
+          ticket_hash?: string | null
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code_hash?: string
+          code_prefix?: string
+          created_at?: string
+          created_by?: string
+          expires_at?: string
+          failed_attempts?: number
+          id?: string
+          note?: string
+          redeemed_at?: string | null
+          revoked_at?: string | null
+          ticket_expires_at?: string | null
+          ticket_hash?: string | null
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_codes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "app_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "access_codes_used_by_fkey"
+            columns: ["used_by"]
+            isOneToOne: false
+            referencedRelation: "app_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_accounts: {
         Row: {
+          approved_at: string | null
           assigned_program_id: string | null
           auth_user_id: string
           created_at: string
@@ -29,6 +169,7 @@ export type Database = {
           username: string
         }
         Insert: {
+          approved_at?: string | null
           assigned_program_id?: string | null
           auth_user_id: string
           created_at?: string
@@ -42,6 +183,7 @@ export type Database = {
           username: string
         }
         Update: {
+          approved_at?: string | null
           assigned_program_id?: string | null
           auth_user_id?: string
           created_at?: string
@@ -207,6 +349,42 @@ export type Database = {
           {
             foreignKeyName: "chat_threads_last_message_sender_id_fkey"
             columns: ["last_message_sender_id"]
+            isOneToOne: false
+            referencedRelation: "app_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_program_bundles: {
+        Row: {
+          bundle: Json
+          client_id: string
+          published_by: string
+          updated_at: string
+        }
+        Insert: {
+          bundle: Json
+          client_id: string
+          published_by: string
+          updated_at?: string
+        }
+        Update: {
+          bundle?: Json
+          client_id?: string
+          published_by?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_program_bundles_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: true
+            referencedRelation: "app_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_program_bundles_published_by_fkey"
+            columns: ["published_by"]
             isOneToOne: false
             referencedRelation: "app_accounts"
             referencedColumns: ["id"]
@@ -579,16 +757,29 @@ export type Database = {
           thread_id: string
         }[]
       }
+      append_onboarding_greeting: {
+        Args: { p_client_id: string }
+        Returns: undefined
+      }
+      append_onboarding_messages: {
+        Args: { p_client: string; p_messages: Json }
+        Returns: undefined
+      }
       append_progress_pictures_to_batch: {
         Args: { p_batch_id: string; p_client_id: string; p_pictures: Json }
         Returns: string
       }
+      approve_client: { Args: { p_client_id: string }; Returns: undefined }
       can_access_chat_thread: {
         Args: { p_thread_id: string }
         Returns: boolean
       }
       can_read_client_account: {
         Args: { p_client_id: string }
+        Returns: boolean
+      }
+      can_write_chat: {
+        Args: { sender_account_id: string; thread_id: string }
         Returns: boolean
       }
       complete_client_onboarding: {
@@ -607,6 +798,15 @@ export type Database = {
         Returns: string
       }
       current_account_id: { Args: never; Returns: string }
+      decide_payout: {
+        Args: {
+          p_coach_id: string
+          p_decision: string
+          p_payout_id: string
+          p_reason: string
+        }
+        Returns: undefined
+      }
       get_chat_unread_counts: {
         Args: { p_account_id: string }
         Returns: {
@@ -614,6 +814,7 @@ export type Database = {
           unread_messages: number
         }[]
       }
+      get_client_program_bundle: { Args: never; Returns: Json }
       get_coach_profile: {
         Args: never
         Returns: {
@@ -639,6 +840,7 @@ export type Database = {
         }[]
       }
       is_app_coach: { Args: never; Returns: boolean }
+      is_chat_participant: { Args: { thread_id: string }; Returns: boolean }
       is_coach: { Args: never; Returns: boolean }
       is_payment_manager: { Args: never; Returns: boolean }
       is_progress_picture_storage_path: {
@@ -650,6 +852,23 @@ export type Database = {
         Returns: undefined
       }
       owns_app_account: { Args: { p_account_id: string }; Returns: boolean }
+      publish_client_program: {
+        Args: { p_client_id: string }
+        Returns: undefined
+      }
+      record_payment_and_unlock: {
+        Args: {
+          p_amount_usd: number
+          p_client_username: string
+          p_note: string
+          p_recorded_by: string
+        }
+        Returns: string
+      }
+      record_payment_started: {
+        Args: { p_client_id: string; p_method: string }
+        Returns: undefined
+      }
       send_chat_message: {
         Args: {
           p_body: string
@@ -661,6 +880,27 @@ export type Database = {
       }
       set_progress_picture_preview: {
         Args: { p_batch_id: string; p_client_id: string; p_picture_id: string }
+        Returns: undefined
+      }
+      submit_payout: {
+        Args: {
+          p_amount_usd: number
+          p_note: string
+          p_screenshot_id: string
+          p_submitted_by: string
+        }
+        Returns: string
+      }
+      unread_counts: {
+        Args: { p_account_id: string }
+        Returns: {
+          client_id: string
+          thread_id: string
+          unread: number
+        }[]
+      }
+      upsert_payment_settings: {
+        Args: { p_card_url: string; p_paypal_url: string }
         Returns: undefined
       }
     }
