@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -213,6 +213,211 @@ export type Database = {
           },
         ]
       }
+      paused_workouts: {
+        Row: {
+          client_id: string
+          elapsed_seconds: number
+          has_working_progress: boolean
+          id: string
+          paused_at: string
+          program_id: string | null
+          results: Json
+          workout_id: string
+          workout_name: string
+        }
+        Insert: {
+          client_id: string
+          elapsed_seconds?: number
+          has_working_progress?: boolean
+          id?: string
+          paused_at?: string
+          program_id?: string | null
+          results?: Json
+          workout_id: string
+          workout_name: string
+        }
+        Update: {
+          client_id?: string
+          elapsed_seconds?: number
+          has_working_progress?: boolean
+          id?: string
+          paused_at?: string
+          program_id?: string | null
+          results?: Json
+          workout_id?: string
+          workout_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paused_workouts_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "app_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_settings: {
+        Row: {
+          card_url: string
+          id: number
+          paypal_url: string
+          updated_at: string
+        }
+        Insert: {
+          card_url?: string
+          id?: number
+          paypal_url?: string
+          updated_at?: string
+        }
+        Update: {
+          card_url?: string
+          id?: number
+          paypal_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      payment_started: {
+        Row: {
+          client_id: string
+          client_name: string
+          client_username: string
+          id: string
+          method: string
+          started_at: string
+        }
+        Insert: {
+          client_id: string
+          client_name: string
+          client_username: string
+          id?: string
+          method: string
+          started_at?: string
+        }
+        Update: {
+          client_id?: string
+          client_name?: string
+          client_username?: string
+          id?: string
+          method?: string
+          started_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_started_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "app_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount_usd: number
+          client_id: string
+          client_name: string
+          client_username: string
+          id: string
+          note: string | null
+          recorded_at: string
+          recorded_by: string
+          tag: string
+        }
+        Insert: {
+          amount_usd?: number
+          client_id: string
+          client_name: string
+          client_username: string
+          id?: string
+          note?: string | null
+          recorded_at?: string
+          recorded_by: string
+          tag: string
+        }
+        Update: {
+          amount_usd?: number
+          client_id?: string
+          client_name?: string
+          client_username?: string
+          id?: string
+          note?: string | null
+          recorded_at?: string
+          recorded_by?: string
+          tag?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "app_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "app_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payouts: {
+        Row: {
+          amount_usd: number
+          decided_at: string | null
+          decided_by_coach_id: string | null
+          id: string
+          note: string | null
+          rejection_reason: string | null
+          screenshot_id: string | null
+          status: string
+          submitted_at: string
+          submitted_by: string
+        }
+        Insert: {
+          amount_usd: number
+          decided_at?: string | null
+          decided_by_coach_id?: string | null
+          id?: string
+          note?: string | null
+          rejection_reason?: string | null
+          screenshot_id?: string | null
+          status?: string
+          submitted_at?: string
+          submitted_by: string
+        }
+        Update: {
+          amount_usd?: number
+          decided_at?: string | null
+          decided_by_coach_id?: string | null
+          id?: string
+          note?: string | null
+          rejection_reason?: string | null
+          screenshot_id?: string | null
+          status?: string
+          submitted_at?: string
+          submitted_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payouts_decided_by_coach_id_fkey"
+            columns: ["decided_by_coach_id"]
+            isOneToOne: false
+            referencedRelation: "app_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payouts_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "app_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       progress_picture_batches: {
         Row: {
           capture_date: string
@@ -401,6 +606,7 @@ export type Database = {
         }
         Returns: string
       }
+      current_account_id: { Args: never; Returns: string }
       get_chat_unread_counts: {
         Args: { p_account_id: string }
         Returns: {
@@ -433,6 +639,8 @@ export type Database = {
         }[]
       }
       is_app_coach: { Args: never; Returns: boolean }
+      is_coach: { Args: never; Returns: boolean }
+      is_payment_manager: { Args: never; Returns: boolean }
       is_progress_picture_storage_path: {
         Args: { object_name: string }
         Returns: boolean
