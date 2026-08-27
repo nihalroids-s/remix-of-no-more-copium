@@ -116,22 +116,20 @@ export function AccountAccess() {
   }, [completeAccessCodeAccount, login, navigate]);
 
   useEffect(() => {
-    if (!configured) {
-      setPhase("error");
-      setError(
-        "Cloud connection initializing. What happened: Lovable Cloud environment variables were not present during the last build. What to do: A fresh production build is required to bake the active Cloud credentials into the app.",
-      );
-      return;
-    }
     void (async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (!sessionData.session) {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!sessionData?.session) {
+          setPhase("entry");
+          return;
+        }
+        await continueWithSession();
+      } catch (err) {
+        console.warn("Session check fallback to entry:", err);
         setPhase("entry");
-        return;
       }
-      await continueWithSession();
     })();
-  }, [configured, continueWithSession]);
+  }, [continueWithSession]);
 
   const submitCode = async () => {
     if (codeBusy) return;
