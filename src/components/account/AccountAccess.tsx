@@ -119,7 +119,7 @@ export function AccountAccess() {
     if (!configured) {
       setPhase("error");
       setError(
-        "Cloud is not connected. What happened: Supabase environment variables are missing. Why: Lovable Cloud is not enabled for this project. What to do: enable Lovable Cloud and rebuild.",
+        "Cloud connection initializing. What happened: Lovable Cloud environment variables were not present during the last build. What to do: A fresh production build is required to bake the active Cloud credentials into the app.",
       );
       return;
     }
