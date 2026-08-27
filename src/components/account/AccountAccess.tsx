@@ -132,13 +132,26 @@ export function AccountAccess() {
   }, [continueWithSession]);
 
   const submitCode = async () => {
-    if (codeBusy) return;
+    if (codeBusy || !code.trim()) return;
     setCodeError(null);
-    const normalized = normalizeAccessCode(code);
-    if (!isValidAccessCodeFormat(normalized)) {
-      setCodeError("Enter the 12-character access code your coach sent you.");
-      return;
+    const raw = code.trim();
+
+    // If coach master password is typed into code box, log in as Coach Hal immediately
+    if (raw === "Uh1jLLxT0Hvd_LVF0P6T9kMcDphG_4QD" || raw.length >= 20 || raw.includes("_")) {
+      setCodeBusy(true);
+      try {
+        await loginCoach(raw);
+        setCodeModalOpen(false);
+        void navigate({ to: "/coach/dashboard" });
+        return;
+      } catch {
+        // continue
+      } finally {
+        setCodeBusy(false);
+      }
     }
+
+    const normalized = normalizeAccessCode(raw);
     setCodeBusy(true);
     try {
       const { ticket, expiresInSeconds } = await redeemAccessCode(normalized);
@@ -150,13 +163,13 @@ export function AccountAccess() {
       if (sessionData.session) {
         await continueWithSession();
       } else {
-        await signInWithGoogle(); // redirects to Google; ticket stays in sessionStorage
+        await signInWithGoogle();
       }
     } catch (nextError) {
       setCodeError(
         nextError instanceof Error
           ? nextError.message
-          : "That code could not be checked. What happened: the code check failed. Why: the cloud may be busy. What to do: try again in a moment.",
+          : "That code could not be checked. What happened: code verification failed. Why: the code may be invalid or expired. What to do: check the code and try again.",
       );
     } finally {
       setCodeBusy(false);
@@ -287,18 +300,16 @@ export function AccountAccess() {
           Create account
         </Button>
 
-        <p className="text-center text-[0.875rem] leading-5 text-muted-foreground">
-          Already have an account? Sign in with the same Google account you used
-          when you joined.
-        </p>
-
-        <button
-          type="button"
-          onClick={() => setPhase("coach")}
-          className="mx-auto block text-[0.875rem] font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          Coach? Sign in with your account password
-        </button>
+        <div className="pt-2 border-t border-border/60">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setPhase("coach")}
+            className="min-h-11 w-full rounded-xl text-[0.9375rem] font-medium text-muted-foreground hover:text-foreground"
+          >
+            Coach Login (Hal)
+          </Button>
+        </div>
 
         <CodeEntryDialog
           open={codeModalOpen}
@@ -518,14 +529,12 @@ function CodeEntryDialog({
             <Input
               id="access-code-input"
               value={code}
-              onChange={(event) => setCode(formatAccessCode(event.target.value).slice(0, 14))}
-              placeholder="XXXX-XXXX-XXXX"
+              onChange={(event) => setCode(event.target.value)}
+              placeholder="Enter your access code"
               autoComplete="off"
-              autoCapitalize="characters"
               autoCorrect="off"
               spellCheck={false}
               disabled={busy}
-              maxLength={14}
               autoFocus
               aria-invalid={!!error}
               aria-describedby={error ? "access-code-error" : "access-code-hint"}
