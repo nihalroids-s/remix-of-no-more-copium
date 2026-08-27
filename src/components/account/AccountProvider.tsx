@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { isSupabaseConfigured } from "@/integrations/supabase/config";
 import {
   type AppAccount,
